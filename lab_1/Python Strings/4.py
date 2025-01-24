@@ -1,2 +1,2 @@
 txt = "Hello World"
-x = txt.strip()
+txt =txt.upper()
