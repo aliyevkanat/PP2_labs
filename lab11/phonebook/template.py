@@ -4,10 +4,10 @@ import csv
 
 # Creating a connection
 conn = psycopg2.connect(
-    database = 'university',
+    database = 'phonebook',
     user = 'postgres',
     host = 'localhost',
-    password = 'NaruSaske51>_',
+    password = 'Aa1234',
     port = 5432
 )
 
