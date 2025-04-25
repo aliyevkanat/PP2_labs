@@ -418,33 +418,6 @@ def get_user_input():
 # Getting user_input
 get_user_input()
 
-# Function that returns all records based on part of name 
-execute_query(create_function_select_starts_with_by_name)
-
-# Function that returns all records based on part of phone_numbe 
-execute_query(create_function_select_starts_with_by_phone_number)
-# Creating a Procedure to insert new user by name and phone, update phone if user already exists
-execute_query(create_procedure_insert_by_name_phone)
-
-# Procedure to deleting data from tables by username
-execute_query(create_procedure_delete_by_name)
-
-# Procedure to deleting data from tables by phone
-execute_query(create_procedure_delete_by_phone)
-
-
-# Function to querying data from the tables with pagination (by limit and offset)
-execute_query(create_function_offset_limit)
-
-
-# Creating new data type in SQL for incorrect users
-# execute_query(create_new_type_for_incorrect_users)
-
-# Creating new data type in SQL for users
-# execute_query(create_new_type_for_users)
-
-# Procedure to insert many new users by list of name and phone
-# execute_query(create_procedure_insert_users)
 
 conn.commit()
 
