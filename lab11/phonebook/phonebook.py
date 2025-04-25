@@ -19,17 +19,11 @@ command_create_table = """
     )
 """
 command_insert_into_csv = 'INSERT INTO phonebook (username, phone_number) VALUES (%s, %s)'
-
 command_update_phone = 'UPDATE phonebook SET phone_number = %s WHERE user_id = %s'
-
 command_update_name = 'UPDATE phonebook SET username = %s WHERE user_id = %s'
-
 command_filter_name_starts = "SELECT * FROM phonebook WHERE username LIKE %s"
-
 command_filter_phone_starts = "SELECT * FROM phonebook WHERE phone_number LIKE %s"
-
 command_delete_by_phone = "DELETE FROM phonebook WHERE phone_number = %s"
-
 command_delete_by_name = "DELETE FROM phonebook WHERE username = %s"
 
 create_function_select_starts_with_by_name = """
@@ -46,8 +40,7 @@ create_function_select_starts_with_by_name = """
         END;
         $$
         LANGUAGE plpgsql;
-""" # || -> means concatenation of strings in SQL
-    # p is an alias for the name of the table, it's useful not to write the full name of the table every time
+""" 
 
 create_function_select_starts_with_by_phone_number = """
         CREATE OR REPLACE FUNCTION select_starts_with_phone(starts_with varchar)
@@ -121,7 +114,6 @@ create_new_type_for_incorrect_users = """CREATE TYPE invalid_user_info AS (
         phone_number VARCHAR
 );
 """
-
 # A new data type in SQL for storing users' info 
 create_new_type_for_users = """
     CREATE TYPE user_info AS (
@@ -150,14 +142,12 @@ create_procedure_insert_users = """
         END;
         $$
         LANGUAGE plpgsql;
-""" 
-# invalid_rows := array_append(invalid_rows, rec); -> in this line array_append() appends invalid rows to
+ """ 
+
 # invalid_rows variable and assigns the result back to the invalid_rows
 
-# ~ is in SQL to perform regular expression matching on a string.
 # ^ -> means 'starts with'
 # \d{11} -> with exactly 11 digits
-# $ -> ends after those 11 digits
 
 cur = conn.cursor()
 
@@ -168,9 +158,6 @@ def csv_to_db(csv_file):
         reader_csv = csv.reader(file_csv, delimiter = ',')
         for row in reader_csv:
             cur.execute(command_insert_into_csv, (row[0], row[1]))
-
-# Inserting data into the PhoneBook.
-
 
 # Printing every row of the table
 def print_rows():
@@ -214,10 +201,10 @@ def filter_name_start_by():
 # Filtering by the name taht starts by the user's input
 def filter_phone_start_by():
     starts_with = input('Enter the digits that the phone number has to start with: ')
-    cur.execute(command_filter_phone_starts, (starts_with + '%',)) # After cur.execute(...) the result of the 
-    results = cur.fetchall()                                       # query is saved inside the cur object  
+    cur.execute(command_filter_phone_starts, (starts_with + '%',))
+    results = cur.fetchall()                                       
     for row in results: # .fetchall() takes all rows from the result of the last cur.execute() query 
-        print(row)      # and returns them as a list of tuples
+        print(row)     
 
 # Deleting by the phone number
 def delete_by_phone():
@@ -231,7 +218,6 @@ def delete_by_name():
     cur.execute(command_delete_by_name, (name,))
     print_rows()
 
-
 # Function for retrieving usernames that start with the given letter
 def get_starting_with(letter):
     command = 'SELECT username FROM phonebook WHERE LEFT(username, 1) = %s'
@@ -242,9 +228,7 @@ def get_starting_with(letter):
             print(result)
     except (psycopg2.DatabaseError, Exception) as error:
         print(error)
-
-    
-# Function that returns all records based on part of name  
+        # Function that returns all records based on part of name  
 def select_record_by_username_pattern(pattern):
     command = 'SELECT * FROM select_starts_with(%s)'
     try:
@@ -255,7 +239,6 @@ def select_record_by_username_pattern(pattern):
                 print(row)
     except (psycopg2.DatabaseError, Exception) as error:
         print(error)
-
 
 # Function that returns all records based on part of phone_numbers 
 def select_record_by_phone_number_pattern(pattern):
@@ -269,7 +252,6 @@ def select_record_by_phone_number_pattern(pattern):
     except (psycopg2.DatabaseError, Exception) as error:
         print(error)
 
-    
 # Insert new user by name and phone, update phone if user already exists
 def insert_by_name_and_phone(name, phone):
     command = 'CALL insert_by_name_and_phone(%s, %s)'
@@ -329,11 +311,6 @@ def insert_users(users_to_insert):
     except (psycopg2.DatabaseError, Exception) as error:
         print(error)
             
-            # result = cur.fetchone()[0]
-
-            # invalid_rows = invalid_rows_result[0][0]
-            # print('Invalid rows: ', result)
-    
 # Used to group username and phone number together and pass them as one object to SQL
 class User_info:
     def __init__(self, username, phone_number):
@@ -351,7 +328,6 @@ def adapt_user(user):
 # whenever you pass a User_info object into a query, psycopg2 will 
 # automatically call your adapt_user() function to get the correct SQL version.
 psycopg2.extensions.register_adapter(User_info, adapt_user)
-
 # Function for executing queries
 def execute_query(query):
     try:
@@ -362,14 +338,13 @@ def execute_query(query):
         print(error)
 
 users_to_insert = (
-    ("Sakura Haruno", '87005554433'),
-    ('Kakashi Hatake', '87001112233'),
-    ('Hinata Hyuga', '87009998877'),
-    ('Hashirama Senju', '879872223232'),
-    ('Naruto Uzumaki', '8780'),
-    ('Itachi Uchiha', '8777')
+    ("Harry Kane ", '87005554433'),
+    ('Christian Eriksen', '87001112233'),
+    ('Lucas Moura', '87009998877'),
+    ('Hugo Lloris', '879872223232'),
+    ('Gareth Bale', '8780'),
+    ('Erik Lamela', '8777')
 )
-
 # Getting the user input
 def get_user_input():
     commands = """    insert - Inserting into the database
@@ -436,32 +411,30 @@ def get_user_input():
     elif user_input == 'insert users':
         insert_users(users_to_insert)
 
-# cur.execute(command_create_db)
+#cur.execute(command_create_db)
 
-# cur.execute(command_create_table)
+#cur.execute(command_create_table)
 
 # Getting user_input
 get_user_input()
 
 # Function that returns all records based on part of name 
-# execute_query(create_function_select_starts_with_by_name)
+execute_query(create_function_select_starts_with_by_name)
 
 # Function that returns all records based on part of phone_numbe 
-# execute_query(create_function_select_starts_with_by_phone_number)
-
-
+execute_query(create_function_select_starts_with_by_phone_number)
 # Creating a Procedure to insert new user by name and phone, update phone if user already exists
-# execute_query(create_procedure_insert_by_name_phone)
+execute_query(create_procedure_insert_by_name_phone)
 
 # Procedure to deleting data from tables by username
-# execute_query(create_procedure_delete_by_name)
+execute_query(create_procedure_delete_by_name)
 
 # Procedure to deleting data from tables by phone
-# execute_query(create_procedure_delete_by_phone)
+execute_query(create_procedure_delete_by_phone)
 
 
 # Function to querying data from the tables with pagination (by limit and offset)
-# execute_query(create_function_offset_limit)
+execute_query(create_function_offset_limit)
 
 
 # Creating new data type in SQL for incorrect users
